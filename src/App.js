@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
+function Sidebar() {
+  React.useEffect(() => {
+    console.log("Sidebar");
+  });
+  return <div>Sidebar (look at my nextEffect chain)</div>;
+}
+
+function SidebarWrapper() {
+  return <Sidebar />;
+}
+
+function InnerBody({ count }) {
+  React.useEffect(() => {
+    console.log(`InnerBody: ${count}`);
+  });
+  return <div>InnerBody: {count}</div>;
+}
+
+function Body() {
+  const [count, setCount] = React.useState(1);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <InnerBody count={count} key={count} />
+      <button onClick={() => setCount(x => x + 1)}>Remount InnerBody</button>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  const [showExample, setShowExample] = React.useState(false);
+
+  if (!showExample) {
+    return <button onClick={() => setShowExample(true)}>Show Example</button>;
+  }
+
+  return (
+    <div>
+      <SidebarWrapper />
+      <Body />
+    </div>
+  );
+}
