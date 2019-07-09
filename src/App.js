@@ -1,5 +1,7 @@
 import React from "react";
 
+// Even though <InnerBody> unmounts (and remounts), this Fiber holds a reference to
+// the initial <InnerBody> fiber node.
 function Sidebar() {
   React.useEffect(() => {
     console.log("Sidebar");
@@ -7,6 +9,9 @@ function Sidebar() {
   return <div>Sidebar (look at my nextEffect chain)</div>;
 }
 
+// This is necessary because updating <Body> causes <App>
+// to reclone its children and reset their nextEffect pointer.
+// https://github.com/facebook/react/blob/67e3f3fb6e342f95f00215c84d5d013d7b0e1b33/packages/react-reconciler/src/ReactFiber.js#L418
 function SidebarWrapper() {
   return <Sidebar />;
 }
@@ -29,12 +34,6 @@ function Body() {
 }
 
 export default function App() {
-  const [showExample, setShowExample] = React.useState(false);
-
-  if (!showExample) {
-    return <button onClick={() => setShowExample(true)}>Show Example</button>;
-  }
-
   return (
     <div>
       <SidebarWrapper />
